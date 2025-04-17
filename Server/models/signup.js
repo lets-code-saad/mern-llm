@@ -6,9 +6,10 @@ const signupUser = new mongoose.Schema({
     password: { type: String, required: true },
     role: {
         type: String,
-        enum: ["user", "instructor", "admin"],
-        default:"user"
-    }
+        enum: ["student", "instructor", "admin"],
+        default:"student"
+    },
+    courses:[{type:mongoose.Schema.Types.ObjectId, ref:"Courses"}],
 },{timestamps:true})
 
-module.exports = mongoose.model("Registration", signupUser)
+module.exports = mongoose.model("Registrations", signupUser)
