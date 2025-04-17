@@ -14,7 +14,7 @@ app.use(express.json());
 
 // Routes
 
-app.use("/", (req,res)=> res.send("Server is running"));
+app.get("/", (req,res)=> res.send("Server is running"));
 app.use("/auth", authRoutes);
 app.use("/admin", rolesRoutes);
 app.use("/instructor", coursesRoutes);
