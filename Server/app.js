@@ -8,7 +8,14 @@ const coursesRoutes = require("./routes/coursesRoutes");
 // creating app
 const app = express();
 // for allowing the region to accept the server
-app.use(cors());
+app.use(
+  cors({
+    origin: [
+      "https://mern-lms-backend-orcin.vercel.app/",
+      "http://localhost:3000",
+    ],
+  })
+);
 // for parsing data to json
 app.use(express.json());
 
