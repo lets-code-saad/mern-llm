@@ -11,8 +11,8 @@ const app = express();
 app.use(
   cors({
     origin: [
-      "https://mern-lms-backend-orcin.vercel.app",
-      "http://localhost:3000",
+      `https://mern-lms-backend-orcin.vercel.app`,
+      `http://localhost:3000`,
     ],
   })
 );
@@ -21,7 +21,7 @@ app.use(express.json());
 
 // Routes
 
-app.get("/", (req,res)=> res.send("Server is running"));
+app.get("/", (req, res) => res.send("Server is running"));
 app.use("/auth", authRoutes);
 app.use("/admin", rolesRoutes);
 app.use("/instructor", coursesRoutes);
