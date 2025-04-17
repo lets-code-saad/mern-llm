@@ -29,7 +29,9 @@ app.use("/instructor", coursesRoutes);
 // calling the db
 connectToDB();
 
-const port = 3000;
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
-});
+// const port = 3000;
+// app.listen(port, () => {
+//   console.log(`Server is running on port ${port}`);
+// });
+
+module.exports = app
