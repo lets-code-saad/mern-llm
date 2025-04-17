@@ -11,7 +11,7 @@ const app = express();
 app.use(
   cors({
     origin: [
-      "https://mern-lms-backend-orcin.vercel.app/",
+      "https://mern-lms-backend-orcin.vercel.app",
       "http://localhost:3000",
     ],
   })
