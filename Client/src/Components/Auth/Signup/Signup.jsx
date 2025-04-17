@@ -10,21 +10,88 @@ import {
   TextField,
   Typography,
   CardMedia,
+  Switch,
+  styled,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import React, { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { Controller, useForm } from "react-hook-form";
-import "./Signup.css"
+import "./Signup.css";
 import { toast, ToastContainer } from "react-toastify";
 
 const Signup = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPass, setShowConfirmPass] = useState(false)
+  const [showConfirmPass, setShowConfirmPass] = useState(false);
   const [originalPassword, setOriginalPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
-const navigate = useNavigate()
+  const navigate = useNavigate();
+
+  // Role Switch
+  const IOSSwitch = styled((props: SwitchProps) => (
+    <Switch
+      focusVisibleClassName=".Mui-focusVisible"
+      disableRipple
+      {...props}
+    />
+  ))(({ theme }) => ({
+    width: 42,
+    height: 26,
+    padding: 0,
+    "& .MuiSwitch-switchBase": {
+      padding: 0,
+      margin: 2,
+      transitionDuration: "300ms",
+      "&.Mui-checked": {
+        transform: "translateX(16px)",
+        color: "#fff",
+        "& + .MuiSwitch-track": {
+          backgroundColor: "#65C466",
+          opacity: 1,
+          border: 0,
+          ...theme.applyStyles("dark", {
+            backgroundColor: "#2ECA45",
+          }),
+        },
+        "&.Mui-disabled + .MuiSwitch-track": {
+          opacity: 0.5,
+        },
+      },
+      "&.Mui-focusVisible .MuiSwitch-thumb": {
+        color: "#33cf4d",
+        border: "6px solid #fff",
+      },
+      "&.Mui-disabled .MuiSwitch-thumb": {
+        color: theme.palette.grey[100],
+        ...theme.applyStyles("dark", {
+          color: theme.palette.grey[600],
+        }),
+      },
+      "&.Mui-disabled + .MuiSwitch-track": {
+        opacity: 0.7,
+        ...theme.applyStyles("dark", {
+          opacity: 0.3,
+        }),
+      },
+    },
+    "& .MuiSwitch-thumb": {
+      boxSizing: "border-box",
+      width: 22,
+      height: 22,
+    },
+    "& .MuiSwitch-track": {
+      borderRadius: 26 / 2,
+      backgroundColor: "#E9E9EA",
+      opacity: 1,
+      transition: theme.transitions.create(["background-color"], {
+        duration: 500,
+      }),
+      ...theme.applyStyles("dark", {
+        backgroundColor: "#39393D",
+      }),
+    },
+  }));
 
   const {
     control,
@@ -42,19 +109,18 @@ const navigate = useNavigate()
 
   const onSubmit = async (data) => {
     setLoading(true);
-    await new Promise ((resolve)=> setTimeout(resolve,2000))
-      console.log(data);
-     toast.success("Signed Up Successfully!");
-      reset(); //just resets the form values , not states
-      setOriginalPassword("");
-      setConfirmPassword("");
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+    console.log(data);
+    toast.success("Signed Up Successfully!");
+    reset(); //just resets the form values , not states
+    setOriginalPassword("");
+    setConfirmPassword("");
     setLoading(false);
-   
-    // if we have to navigate, we have to make the navigate function wait
-//     setTimeout(() => {
-//   navigate("/signin")
-// },2500)
 
+    // if we have to navigate, we have to make the navigate function wait
+    //     setTimeout(() => {
+    //   navigate("/signin")
+    // },2500)
   };
 
   return (
@@ -300,7 +366,7 @@ const navigate = useNavigate()
                       }}
                       error={errors.confirmPassword}
                       placeholder="Enter your Password"
-                      type={showPassword ? "text" : "password"}
+                      type={showConfirmPass ? "text" : "password"}
                       fullWidth
                       endAdornment={
                         <InputAdornment position="end">
@@ -308,7 +374,11 @@ const navigate = useNavigate()
                             onClick={() => setShowConfirmPass((prev) => !prev)}
                             edge="end"
                           >
-                            {showConfirmPass ? <VisibilityOff /> : <Visibility />}
+                            {showConfirmPass ? (
+                              <VisibilityOff />
+                            ) : (
+                              <Visibility />
+                            )}
                           </IconButton>
                         </InputAdornment>
                       }
@@ -334,7 +404,24 @@ const navigate = useNavigate()
                 alignItems="center"
                 mb={3}
               >
-                <FormControlLabel control={<Checkbox />} label="Remember me" />
+                {/* for checking Role handler */}
+                <Controller
+                  name="isInstructor"
+                  control={control}
+                  defaultValue={false}
+                  render={({ field }) => (
+                    <FormControlLabel
+                      control={<IOSSwitch sx={{ m: 1 }} defaultChecked />}
+                      label={
+                        field.value
+                          ? "Yes i'm an instructor!"
+                          : "Are you an instructor?"
+                      }
+                      checked={field.value}
+                      onChange={(e) => field.onChange(e.target.checked)}
+                    />
+                  )}
+                />
                 <Typography variant="body2" sx={{ cursor: "pointer" }}>
                   Forgot Password ?
                 </Typography>
