@@ -47,7 +47,7 @@ const signinRoute = async (req, res) => {
     const existingUser = await signup.findOne({ username });
     if (!existingUser) {
       return res
-        .status(401)
+        .status(403)
         .json({ message: "Username or password is incorrect" });
     }
     // checking if the password is correct
@@ -57,7 +57,7 @@ const signinRoute = async (req, res) => {
     );
     if (!passwordMatches) {
       return res
-        .status(401)
+        .status(403)
         .json({ message: "Username or password is incorrect" });
     }
 

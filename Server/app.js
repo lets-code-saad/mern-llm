@@ -13,6 +13,8 @@ app.use(
     origin: [
       `https://mern-lms-backend-orcin.vercel.app`,
       `http://localhost:3000`,
+      `http://localhost:3001`,
+      `http://localhost:5000`,
     ],
   })
 );
@@ -29,7 +31,7 @@ app.use("/instructor", coursesRoutes);
 // calling the db
 connectToDB();
 
-const port = 3000;
+const port = 5000;
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
