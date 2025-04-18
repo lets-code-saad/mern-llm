@@ -1,4 +1,5 @@
 import {
+  Avatar,
   Box,
   Button,
   Divider,
@@ -6,11 +7,15 @@ import {
   MenuItem,
   Typography,
 } from "@mui/material";
-import React, { useState } from "react";
-import "./Navbar.css"
+import React, { useEffect, useState } from "react";
+import "./Navbar.css";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 import DashboardIcon from "@mui/icons-material/Dashboard";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import authToProfile from "../../Store/Thunks/getProfileThunk";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import { deepOrange } from "@mui/material/colors";
 
 const Navbar = ({ onDashboardClick }) => {
   // Account menu
@@ -23,10 +28,23 @@ const Navbar = ({ onDashboardClick }) => {
     setAccAnchorEl(null);
   };
 
+  // account menu
+  
+
   // Dashboard menu
   const [dashboardAnchorEl, setDashboardAnchorEl] = useState(null);
   const dashboardOpen = Boolean(dashboardAnchorEl);
   const handleDashboardClose = () => setDashboardAnchorEl(null);
+  const dispatch = useDispatch();
+const navigate = useNavigate()
+
+  // calling profile api
+  useEffect(() => {
+    dispatch(authToProfile());
+  }, [dispatch]);
+
+  const { user } = useSelector((state) => state.GetProfileSlice);
+  console.log(user, "userprofile");
 
   return (
     <>
@@ -42,61 +60,100 @@ const Navbar = ({ onDashboardClick }) => {
           </Link>
           {/* nav-links */}
           <Box className="d-flex align-items-center gap-4">
-            <Link to="/add-course" className="text-black text-decoration-none">
-              <Button
-                sx={{
-                  width: "10px",
-                  whiteSpace: "nowrap",
-                  borderRadius: "5px",
-                  fontSize: "15px",
-                  textTransform: "capitalize",
-                  boxShadow: "none",
-                  "&:hover": { boxShadow: "none", background: "none" },
-                  "&:focus": {
-                    outline: "none",
-                    boxShadow: "none",
-                    background: "none",
-                  },
-                  "&:active": { boxShadow: "none" },
-                }}
-                className="fs-15 text-pg"
+            {user?.role === "instructor" ? ( //optional chaining
+              <Link
+                to="/add-course"
+                className="text-black text-decoration-none"
               >
-                Add Course
-              </Button>
-            </Link>
-            <Divider
-              orientation="vertical"
-              className="text-black"
-              variant="middle"
-              flexItem
-            />
-            <Link to="/signin" className="text-black text-decoration-none">
-              <Button
-                sx={{
-                  width: "10px",
-                  whiteSpace: "nowrap",
-                  borderRadius: "5px",
-                  fontSize: "15px",
-                  textTransform: "capitalize",
-                  boxShadow: "none",
-                  "&:hover": { boxShadow: "none", background: "none" },
-                  "&:focus": {
-                    outline: "none",
+                <Button
+                  sx={{
+                    width: "10px",
+                    whiteSpace: "nowrap",
+                    borderRadius: "5px",
+                    fontSize: "15px",
+                    textTransform: "capitalize",
                     boxShadow: "none",
-                    background: "none",
-                  },
-                  "&:active": { boxShadow: "none" },
-                }}
-                className="fs-15 text-pg"
-              >
-                Login
-              </Button>
-            </Link>
-            <Link to="/signup" className="text-black text-decoration-none">
-              <Button className="bg-blue text-capitalize text-white py-2 px-3 fs-15 border-0 rounded-pill">
-                Create Account
-              </Button>
-            </Link>
+                    "&:hover": { boxShadow: "none", background: "none" },
+                    "&:focus": {
+                      outline: "none",
+                      boxShadow: "none",
+                      background: "none",
+                    },
+                    "&:active": { boxShadow: "none" },
+                  }}
+                  className="fs-15 text-pg"
+                >
+                  Add Course
+                </Button>
+              </Link>
+            ) : null}
+            {!user?.userInDB && (
+              <Divider
+                orientation="vertical"
+                className="text-black"
+                variant="middle"
+                flexItem
+              />
+            )}
+            {!user ? (
+              <Link to="/signin" className="text-black text-decoration-none">
+                <Button
+                  sx={{
+                    width: "10px",
+                    whiteSpace: "nowrap",
+                    borderRadius: "5px",
+                    fontSize: "15px",
+                    textTransform: "capitalize",
+                    boxShadow: "none",
+                    "&:hover": { boxShadow: "none", background: "none" },
+                    "&:focus": {
+                      outline: "none",
+                      boxShadow: "none",
+                      background: "none",
+                    },
+                    "&:active": { boxShadow: "none" },
+                  }}
+                  className="fs-15 text-pg"
+                >
+                  Login
+                </Button>
+              </Link>
+            ) : (
+              <Box className="d-flex align-items-center gap-4">
+                {" "}
+                <Typography className="fs-24" variant="span">
+                  {`Hi ${user?.userInDB?.username}`}
+                </Typography>
+                {/* Account Icon Menu */}
+                {!user?.userInDB?.username ? (
+                  <Link
+                    to="/signup"
+                    className="text-black text-decoration-none"
+                  >
+                    <Button className="bg-blue text-capitalize text-white py-2 px-3 fs-15 border-0 rounded-pill">
+                      Create Account
+                    </Button>
+                  </Link>
+                ) : (
+                  <button
+                    onClick={handleClick}
+                    style={{ background: "none" }}
+                    className="bg-none border-0"
+                  >
+                    <Avatar sx={{ bgcolor: deepOrange[500] }}>
+                      {user?.userInDB?.username.charAt(0).toUpperCase()}
+                    </Avatar>
+                  </button>
+                )}
+              </Box>
+            )}
+            {!user && (
+              <Link to="/signup" className="text-black text-decoration-none">
+                <Button className="bg-blue text-capitalize text-white py-2 px-3 fs-15 border-0 rounded-pill">
+                  Create Account
+                </Button>
+              </Link>
+            )}
           </Box>
         </Box>
         <Divider
@@ -121,33 +178,77 @@ const Navbar = ({ onDashboardClick }) => {
           {/* nav-links */}
           <Box className="d-flex align-items-center gap-2">
             {/* Dashboard Icon Menu */}
-            <button
-              onClick={(e) => setDashboardAnchorEl(e.currentTarget)}
-              style={{ background: "none" }}
-              className="bg-none border-0"
-            >
-              <DashboardIcon />
-            </button>
+            {user?.role === "instructor" && (
+              <button
+                onClick={(e) => setDashboardAnchorEl(e.currentTarget)}
+                style={{ background: "none" }}
+                className="bg-none border-0"
+              >
+                <DashboardIcon />
+              </button>
+            )}
 
             {/* Account Icon Menu */}
-            <button
-              onClick={handleClick}
-              style={{ background: "none" }}
-              className="bg-none border-0"
-            >
-              <AccountCircleOutlinedIcon />
-            </button>
+            {!user?.userInDB?.username ? (
+              <Box className="d-flex align-items-center gap-2">
+                <Link to="/signin" className="text-black text-decoration-none">
+                  <Button
+                    sx={{
+                      width: "10px",
+                      whiteSpace: "nowrap",
+                      borderRadius: "5px",
+                      fontSize: "15px",
+                      textTransform: "capitalize",
+                      boxShadow: "none",
+                      "&:hover": { boxShadow: "none", background: "none" },
+                      "&:focus": {
+                        outline: "none",
+                        boxShadow: "none",
+                        background: "none",
+                      },
+                      "&:active": { boxShadow: "none" },
+                    }}
+                    className="fs-15 text-pg"
+                  >
+                    Login
+                  </Button>
+                </Link>
+
+                {/* Signup page if no login */}
+                
+                <Link to="/signup" className="text-black text-decoration-none">
+                  <Button className="bg-blue text-capitalize text-white py-2 px-3 fs-15 border-0 rounded-pill">
+                    Create Account
+                  </Button>
+                </Link>
+              </Box>
+            ) : (
+              <button
+                onClick={handleClick}
+                style={{ background: "none" }}
+                className="bg-none border-0"
+              >
+                <Avatar sx={{ bgcolor: deepOrange[500] }}>
+                  {user?.userInDB?.username.charAt(0).toUpperCase()}
+                </Avatar>
+              </button>
+            )}
 
             {/* Account Menu */}
             <Menu
+              className="account_menu"
               anchorEl={accAnchorEl}
               open={accOpen}
               onClose={handleClose}
               anchorOrigin={{ vertical: "top", horizontal: "left" }}
               transformOrigin={{ vertical: "top", horizontal: "left" }}
-              PaperProps={{ sx: { mt: 3.5, ml: 1 } }}
+              PaperProps={{ sx: { mt: 6.5, ml: 2 } }}
             >
-              <MenuItem onClick={handleClose}>Profile</MenuItem>
+              <MenuItem onClick={handleClose}>
+                {user?.userInDB?.username
+                  ? `${user?.userInDB?.username}`
+                  : "Profile"}
+              </MenuItem>
               <MenuItem onClick={handleClose}>My account</MenuItem>
               <NavLink
                 to="/signin"
@@ -157,7 +258,15 @@ const Navbar = ({ onDashboardClick }) => {
                     : "text-decoration-none text-black"
                 }
               >
-                <MenuItem onClick={handleClose}>Logout</MenuItem>
+                <MenuItem
+                  onClick={() => {
+                    localStorage.removeItem("token"); // removes the token, and again asks the user to login
+                    handleClose();
+                    navigate("/");
+                  }}
+                >
+                  Logout
+                </MenuItem>
               </NavLink>
             </Menu>
 

@@ -2,7 +2,6 @@ import {
   Box,
   Button,
   FormControlLabel,
-  Checkbox,
   Grid,
   IconButton,
   InputAdornment,
@@ -19,6 +18,8 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { Controller, useForm } from "react-hook-form";
 import "./Signup.css";
 import { toast, ToastContainer } from "react-toastify";
+import signupForAuth from "../../Store/Thunks/signupThunk";
+import { useDispatch, useSelector } from "react-redux";
 
 const Signup = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -26,7 +27,7 @@ const Signup = () => {
   const [originalPassword, setOriginalPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   // Role Switch
   const IOSSwitch = styled((props: SwitchProps) => (
@@ -107,21 +108,25 @@ const Signup = () => {
     },
   });
 
-  const onSubmit = async (data) => {
-    setLoading(true);
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    console.log(data);
-    toast.success("Signed Up Successfully!");
-    reset(); //just resets the form values , not states
-    setOriginalPassword("");
-    setConfirmPassword("");
-    setLoading(false);
+  // SUBMIT FUNCTION
 
-    // if we have to navigate, we have to make the navigate function wait
-    //     setTimeout(() => {
-    //   navigate("/signin")
-    // },2500)
+  const onSubmit = async (data) => {
+    try {
+      setLoading(true);
+      const result = await dispatch(signupForAuth(data)).unwrap(); // ✅ works now
+      toast.success(result.message); // you can also use: result?.message
+      reset();
+      setOriginalPassword("");
+      setConfirmPassword("");
+    } catch (error) {
+      setLoading(false);
+    }
   };
+
+  // if we have to navigate, we have to make the navigate function wait
+  //     setTimeout(() => {
+  //   navigate("/signin")
+  // },2500)
 
   return (
     <Box className="container">

@@ -38,6 +38,10 @@
   .navBar_small{
     display:none;
   }
+  .account_menu{
+    top:0;
+    left:-37px!important;
+  }
 }
 
 /* Large devices (desktops) */
@@ -48,6 +52,10 @@
   .navBar_small{
     display:none;
   }
+    .account_menu{
+    top:0;
+    left:-37px!important;
+  }
 }
 
 /* Extra large devices (large desktops) */
@@ -57,6 +65,10 @@
   }
   .navBar_small{
     display:none;
+  }
+    .account_menu{
+    top:0;
+    left:-37px!important;
   }
 }
 

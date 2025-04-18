@@ -14,47 +14,64 @@ import {
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import React, { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import "./Signin.css"
+import "./Signin.css";
 import { Controller, useForm } from "react-hook-form";
 import { toast, ToastContainer } from "react-toastify";
-
+import axios from "axios";
+import signinForAuth from "../../Store/Thunks/signinThunk";
+import { useDispatch } from "react-redux";
+import authToProfile from "../../Store/Thunks/getProfileThunk";
 
 const Signin = () => {
   const [showPassword, setShowPassword] = useState(false);
-const [loading,setLoading] = useState(false)
-const navigate = useNavigate()
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   const {
-      control,
-      handleSubmit,
-      reset,
-      formState: { errors },
-    } = useForm({
-      defaultValues: {
-        username: "",
-        email: "",
-        password: "",
-        confirmPassword: "",
-      },
-    });
-  
-    const onSubmit = (data) => {
+    control,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      username: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    },
+  });
+
+  const onSubmit = async (data) => {
+    try {
       setLoading(true);
-      setTimeout(() => {
-        console.log(data);
+      const result = await dispatch(signinForAuth(data)).unwrap();
+      // getting token from login api
+      const token = result?.token
+      localStorage.setItem("token", token)
+
+      // creating a small delay after saving token: 
+      await new Promise((resolve)=> setTimeout(resolve,100))
+
+    // get profile call
+      const profile = await dispatch(authToProfile()).unwrap(); //unwrap makes it await
+console.log(profile);
+
+
         setLoading(false);
-        toast.success("Loggedin Successfully!");
+        toast.success(result?.message);
         reset(); //just resets the form values , not states
-      }, 1000);
-      
-      setTimeout(() => {
-        navigate("/")
-        
-      },3000)
-    };
-  
+        navigate("/");
+
+    } catch (error) {
+      // toast.error(error?.message);
+      setLoading(false)
+    }
+  };
+
   return (
     <Box className="container">
-            <ToastContainer position="top-center" />
+      <ToastContainer position="top-center" />
       <Grid
         className="signinDiv"
         container
@@ -236,7 +253,6 @@ const navigate = useNavigate()
                   </Typography>
                 )}
               </Box>
-
 
               <Box
                 display="flex"
